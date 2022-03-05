@@ -1,6 +1,6 @@
 # STIMS.jl by Rohan Maddamsetti
 
-## STIMS is a a Simple Test to Infer Mode of Selection (STIMS), designed for metagenomic time series of evolution in hypermutator bacterial populations.
+## STIMS is a Simple Test to Infer Mode of Selection (STIMS), designed for metagenomic time series of evolution in hypermutator bacterial populations.
 
 For details, see our preprint: Discovery of positive and purifying selection in metagenomic time series of hypermutator microbial populations, by Rohan Maddamsetti and Nkrumah A. Grant.
 
