@@ -281,6 +281,41 @@ function add_cumulative_mut_layer(p, layer_df; my_color="black")
 end
 
 
+function calculate_genomic_trajectories(gene_mutation_data, genome_metadata, pop_level_vec)
+    ## rather than bootstrapping a mean, its much simpler to calculate
+    ## the normalized cumulative number of mutations over the entire genome
+    ## (in this case, the set of all genes in the genome included in the analysis).
+    
+    genomic_trajectories = calc_cumulative_muts(genome_metadata,
+                                              gene_mutation_data,
+                                              genome_metadata, pop_level_vec)
+    ## for better plotting, divide x-axis labels by 1000.
+    transform!(genomic_trajectories, :t0 => ByRow(t -> t/1000) => :Time)
+    return(genomic_trajectories)
+end
+
+
+function plot_trajectories(trajs)
+    
+    fancy_scientific = R"""function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scales::scientific_format()(x)))))}"""
+    
+    p = ggplot(trajs, aes(x=:Time, y=:normalized_cs)) +
+        ylab("Cumulative mutations (normalized)") +
+        theme_classic() +
+        geom_step(size=0.2, color="black") +
+        theme(var"axis.title.x" = element_text(size=13),
+              var"axis.title.y" = element_text(size=13),
+              var"axis.text.x"  = element_text(size=13),
+              var"axis.text.y"  = element_text(size=13)) +
+                  scale_y_continuous(labels=fancy_scientific,
+                                     breaks = R"scales::extended_breaks(n = 6)",
+                                     limits = R"c(0, NA)") +
+        facet_wrap(R".~Population", scales="free", nrow=4) +
+        xlab("Generations (x 1,000)")
+    return p
+end
+
+
 function run_LTEE_analyses()
     ## This function is for checking correctness,
     ## by comparison to my STIMS implementation in R.
